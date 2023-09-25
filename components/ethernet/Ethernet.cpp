@@ -1,7 +1,6 @@
 #include "include/Ethernet.h"
 
 #include <esp_netif.h>
-#include <esp_eth_netif_glue.h>
 #include <esp_log.h>
 #include <esp_event.h>
 

@@ -1,7 +1,7 @@
 #ifndef ETHERNET_H
 #define ETHERNET_H
 
-#include <esp_eth_driver.h>
+#include <esp_eth.h>
 #include <driver/gpio.h>
 
 
