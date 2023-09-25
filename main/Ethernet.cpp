@@ -1,10 +1,11 @@
-#include "include/Ethernet.h"
+#include "Ethernet.h"
 
 #include <esp_netif.h>
 #include <esp_log.h>
 #include <esp_event.h>
+#include <esp_netif_sntp.h>
 
-// Global Variables:
+/// Global Variables:
 //Supressing warning applying to this struct
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
@@ -27,6 +28,24 @@ esp_eth_phy_t* phySPIPOS;
 
 esp_eth_handle_t ethHandleOS = NULL;
 esp_eth_config_t ethConfigSPIOS;
+
+// SNTP
+// ESP_NETIF_SNTP_DEFAULT_CONFIG_MULTIPLE does not compile :C
+esp_sntp_config_t config = {
+        .smooth_sync = false,
+        .server_from_dhcp = false,
+        .wait_for_sync = true,
+        .start = false,
+        .sync_cb = NULL,
+        .renew_servers_after_new_IP = false,
+        .ip_event_to_renew = IP_EVENT_STA_GOT_IP,
+        .index_of_first_server = 0,
+        .num_of_servers = 0,
+        .servers = {},
+
+};
+
+/// Functions
 
 esp_err_t ethInit() {
     esp_err_t error = ESP_OK;
@@ -90,5 +109,23 @@ esp_err_t networkInterfaceStart() {
     if (error != ESP_OK) {
         ESP_LOGE(ethernetTestTag, "An error occured during the initialisation of the event loop : 0x%X , %s", error, esp_err_to_name(error));
     }
+    return error;
+}
+
+esp_err_t networkSNTPStart() {
+    esp_err_t error = ESP_OK;
+    error = esp_netif_sntp_init(&config);
+
+    if (error != ESP_OK) {
+        ESP_LOGE(ethernetTestTag, "An error occured during the initialisation of the SNTP : 0x%X , %s", error, esp_err_to_name(error));
+        return error;
+    }
+
+    error = esp_netif_sntp_start();
+
+    if (error != ESP_OK) {
+        ESP_LOGE(ethernetTestTag, "An error occured during the start of the SNTP : 0x%X , %s", error, esp_err_to_name(error));
+    }
+
     return error;
 }

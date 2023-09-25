@@ -24,5 +24,6 @@ extern esp_eth_handle_t ethHandleOS;
 
 esp_err_t ethInit();
 esp_err_t networkInterfaceStart();
+esp_err_t networkSNTPStart();
 
 #endif

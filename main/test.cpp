@@ -1,7 +1,10 @@
 #include <esp_log.h>
 #include <esp_eth.h>
+#include <inttypes.h>
+#include <esp_freertos_hooks.h>
 
 #include "Ethernet.h"
+#include "PingTest.h"
 
 constexpr char tag[] = "Testing ETH";
 
@@ -22,11 +25,27 @@ spi_bus_config_t spi1Config = {
 
 spi_host_device_t spi1Host = SPI3_HOST;
 
+// Functions
+
+void sntpTestTask(void* unused) {
+    uint32_t sec;
+    uint32_t uSec;
+
+    for(;;) {
+        sntp_get_system_time(&sec, &uSec);
+
+        vTaskDelay(1000 / mPortTick)
+    }
+}
+
 extern "C" void app_main(void) {
     ESP_LOGI(tag, "Setting up");
 
     spi_bus_initialize(spi1Host, &spi1Config, SPI_DMA_DISABLED);
     ethInit();
     networkInterfaceStart();
+    networkSNTPStart();
+    //initializePing();
+
 }
 
