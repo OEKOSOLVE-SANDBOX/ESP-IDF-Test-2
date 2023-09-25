@@ -1,8 +1,12 @@
 #include <esp_log.h>
+#include <esp_event.h>
 
-#include "../Ethernet/include/Ethernet.h"
+
+#include "Ethernet.h"
 
 constexpr char tag[] = "Testing ETH";
+
+esp_err_t networkInterfaceStart();
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
@@ -26,3 +30,4 @@ extern "C" void app_main(void) {
     ethInit();
     networkInterfaceStart();
 }
+

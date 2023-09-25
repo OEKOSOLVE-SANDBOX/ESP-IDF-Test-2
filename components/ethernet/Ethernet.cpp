@@ -1,9 +1,9 @@
 #include "include/Ethernet.h"
 
 #include <esp_netif.h>
+#include <esp_eth_netif_glue.h>
 #include <esp_log.h>
 #include <esp_event.h>
-
 
 // Global Variables:
 //Supressing warning applying to this struct
@@ -63,6 +63,7 @@ esp_err_t ethInit() {
 
     return error;
 }
+
 
 esp_err_t networkInterfaceStart() {
     esp_err_t error;
