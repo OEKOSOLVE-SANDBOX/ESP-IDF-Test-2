@@ -2,6 +2,7 @@
 #include <esp_eth.h>
 #include <inttypes.h>
 #include <esp_freertos_hooks.h>
+#include <esp_netif_sntp.h>
 
 #include "Ethernet.h"
 #include "PingTest.h"
@@ -30,11 +31,16 @@ spi_host_device_t spi1Host = SPI3_HOST;
 void sntpTestTask(void* unused) {
     uint32_t sec;
     uint32_t uSec;
-
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    if (esp_netif_sntp_sync_wait(pdMS_TO_TICKS(10000)) != ESP_OK) {
+        ESP_LOGE("SNTP Time Test", "Failed to sync time");
+    }
     for(;;) {
         sntp_get_system_time(&sec, &uSec);
 
-        vTaskDelay(1000 / mPortTick)
+        ESP_LOGE("SNTP Time Test", "%"PRIi32" : %"PRIi32, sec, uSec);
+
+        vTaskDelay(15000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -47,5 +53,13 @@ extern "C" void app_main(void) {
     networkSNTPStart();
     //initializePing();
 
+    xTaskCreate(
+            sntpTestTask,
+            "SNTP TEST TASK",
+            1024 * 10,
+            NULL,
+            10,
+            NULL
+            );
 }
 
