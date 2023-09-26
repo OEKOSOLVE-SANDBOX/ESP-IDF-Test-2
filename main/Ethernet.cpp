@@ -38,10 +38,14 @@ esp_sntp_config_t config = {
         .start = false,
         .sync_cb = NULL,
         .renew_servers_after_new_IP = false,
-        .ip_event_to_renew = IP_EVENT_STA_GOT_IP,
+        .ip_event_to_renew = IP_EVENT_ETH_GOT_IP,
         .index_of_first_server = 0,
-        .num_of_servers = 0,
-        .servers = {},
+        .num_of_servers = 1,
+        .servers = {
+                "pool.ntp.org",
+                //"216.239.35.0",
+                //"162.159.200.123",
+                },
 
 };
 
@@ -117,14 +121,8 @@ esp_err_t networkSNTPStart() {
     error = esp_netif_sntp_init(&config);
 
     if (error != ESP_OK) {
-        ESP_LOGE(ethernetTestTag, "An error occured during the initialisation of the SNTP : 0x%X , %s", error, esp_err_to_name(error));
-        return error;
-    }
-
-    error = esp_netif_sntp_start();
-
-    if (error != ESP_OK) {
-        ESP_LOGE(ethernetTestTag, "An error occured during the start of the SNTP : 0x%X , %s", error, esp_err_to_name(error));
+        ESP_LOGE(ethernetTestTag, "An error occured during the initialisation of the SNTP : 0x%X , %s", error,
+                 esp_err_to_name(error));
     }
 
     return error;

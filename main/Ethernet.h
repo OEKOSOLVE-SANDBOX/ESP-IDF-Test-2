@@ -3,6 +3,16 @@
 
 #include <esp_eth.h>
 #include <driver/gpio.h>
+#include <time.h>
+#include <sys/time.h>
+#include <esp_system.h>
+#include <esp_event.h>
+#include <esp_log.h>
+#include <esp_attr.h>
+#include <esp_sleep.h>
+#include <esp_netif_sntp.h>
+#include <lwip/ip_addr.h>
+#include <esp_sntp.h>
 
 
 /* This header contains the necessary configuration for W5500 Ethernet

@@ -3,9 +3,13 @@
 #include <inttypes.h>
 #include <esp_freertos_hooks.h>
 #include <esp_netif_sntp.h>
+#include <time.h>
+#include <sys/time.h>
+#include <esp_system.h>
+#include <esp_event.h>
 
 #include "Ethernet.h"
-#include "PingTest.h"
+#include "SNTP.h"
 
 constexpr char tag[] = "Testing ETH";
 
@@ -28,38 +32,12 @@ spi_host_device_t spi1Host = SPI3_HOST;
 
 // Functions
 
-void sntpTestTask(void* unused) {
-    uint32_t sec;
-    uint32_t uSec;
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-    if (esp_netif_sntp_sync_wait(pdMS_TO_TICKS(10000)) != ESP_OK) {
-        ESP_LOGE("SNTP Time Test", "Failed to sync time");
-    }
-    for(;;) {
-        sntp_get_system_time(&sec, &uSec);
-
-        ESP_LOGE("SNTP Time Test", "%"PRIi32" : %"PRIi32, sec, uSec);
-
-        vTaskDelay(15000 / portTICK_PERIOD_MS);
-    }
-}
-
 extern "C" void app_main(void) {
     ESP_LOGI(tag, "Setting up");
 
     spi_bus_initialize(spi1Host, &spi1Config, SPI_DMA_DISABLED);
     ethInit();
     networkInterfaceStart();
-    networkSNTPStart();
-    //initializePing();
 
-    xTaskCreate(
-            sntpTestTask,
-            "SNTP TEST TASK",
-            1024 * 10,
-            NULL,
-            10,
-            NULL
-            );
 }
 
